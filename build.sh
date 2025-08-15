@@ -2,6 +2,9 @@
 # exit on error
 set -o errexit
 
+# Add this line to upgrade pip and setuptools
+pip install --upgrade pip setuptools wheel
+
 pip install -r requirements.txt
 
 # Create the checkpoints directory if it doesn't exist

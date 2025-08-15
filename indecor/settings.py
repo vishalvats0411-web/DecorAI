@@ -9,9 +9,10 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -126,3 +128,46 @@ MEDIA_URL = ''
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+load_dotenv()
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
+# Set DEBUG to False unless an environment variable says otherwise
+DEBUG = os.environ.get('RENDER') != 'true'
+
+# ALLOWED_HOSTS for Render
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+
+# Database configuration using dj-database-url
+DATABASES = {
+    'default': dj_database_url.config(
+        # Feel free to set a default for local development
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600
+    )
+}
+
+# Static files configuration
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
+
+# Enable WhiteNoise for serving static files
+# Add this middleware right after the SecurityMiddleware
+# MIDDLEWARE = [
+#     'django.middleware.security.SecurityMiddleware',
+#     'whitenoise.middleware.WhiteNoiseMiddleware',  <-- ADD THIS
+#     ...
+# ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# Update the model path to use the persistent disk on Render
+# We will mount our disk at /var/data/decorai_model
+sam_checkpoint = "/var/data/decorai_model/sam_vit_l_0b3195.pth"
+if not os.path.exists(sam_checkpoint):
+    # Fallback to local path for development
+    sam_checkpoint = "main/static/checkpoints/sam_vit_l_0b3195.pth"

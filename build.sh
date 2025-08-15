@@ -2,9 +2,13 @@
 # exit on error
 set -o errexit
 
-# Add this line to upgrade pip and setuptools
-pip install --upgrade pip setuptools wheel
+# Upgrade pip for compatibility
+pip install --upgrade pip
 
+# Install PyTorch and Torchvision first from the official CPU index
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# Now, install the rest of the packages from your requirements file
 pip install -r requirements.txt
 
 # Create the checkpoints directory if it doesn't exist
@@ -19,5 +23,6 @@ else
     echo "AI model already exists."
 fi
 
+# Run Django management commands
 python manage.py collectstatic --no-input
 python manage.py migrate

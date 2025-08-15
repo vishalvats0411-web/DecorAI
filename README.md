@@ -10,6 +10,8 @@
 
 ![Main Showcase Image](media/demo_suggestions.png)
 
+
+![Main Showcase Image](media/demo_about_me.png)
 ---
 
 ## 🌟 Overview

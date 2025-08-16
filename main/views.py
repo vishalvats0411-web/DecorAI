@@ -4,7 +4,6 @@ import os
 import cv2
 import random
 import numpy as np
-import matplotlib.colors as mcolors
 from django.shortcuts import render, redirect
 from PIL import Image, ImageDraw
 from django.contrib import messages
@@ -13,7 +12,10 @@ from .models import Imag, Point, SegmentedImages, Suggestions
 
 # ==============================================================================
 # GLOBAL MODEL LOADING
+# The model is now loaded in apps.py and assigned here.
 # ==============================================================================
+PREDICTOR = None 
+
 print("Initializing AI Model...")
 try:
     from segment_anything import sam_model_registry, SamPredictor

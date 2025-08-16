@@ -12,3 +12,4 @@ torchvision==0.15.1
 segment-anything==1.0
 opencv-python==4.7.0.72
 Pillow==9.5.0
+matplotlib==3.7.2

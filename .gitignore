@@ -162,5 +162,3 @@ cython_debug/
 
 myenv/
 venv/
-*.pth
-main/static/checkpoints/*.pth

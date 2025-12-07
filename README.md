@@ -77,7 +77,7 @@ cd decorai
 ```
 Download the SAM model from the [link](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth)
 ``` 
- create a folder named checkpoints inside main/static directory and paste the model file in there
+ create a folder named checkpoints inside main folder paste the model file in there
 ```
 
 Create a Virtual Environment (Recommended)

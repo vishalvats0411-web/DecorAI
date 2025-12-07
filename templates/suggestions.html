@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Design Suggestions - Indecor</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.min.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <nav class="navbar navbar-dark">
+          <div class="container d-flex justify-content-center">
+            <a class="navbar-brand" href="{{ url_for('home') }}">DECORAI</a>
+          </div>
+        </nav>
+    </header>
+
+    <main class="main-wrapper">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h1>Our AI Suggestions For Your Space</h1>
+                <p class="lead">Explore curated color palettes and texture designs generated for your room.</p>
+            </div>
+            
+            <div class="row">
+                {% for suggestion in paths %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card p-0">
+                        <img src="{{ suggestion.sugImage.url }}" class="card-img-top" alt="Suggestion {{ loop.index }}" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Suggestion {{ loop.index }}</h5>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('segment') }}" class="btn btn-secondary">&larr; Back to Customization</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Copyright &copy;2025 All rights reserved | Designed by Vishal Kumar Vats</p>
+    </footer>
+
+</body>
+</html>

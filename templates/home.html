@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecorAI - AI Home Decor</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.min.css') }}">
+</head>
+<body>
+
+    <div id="preloader"></div>
+
+    <header class="header">
+        <nav class="navbar navbar-dark">
+          <div class="container d-flex justify-content-center">
+              <a class="navbar-brand" href="{{ url_for('home') }}" >DECORAI</a>
+          </div>
+        </nav>
+    </header>
+
+    <main class="main-wrapper">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h1>AI-Powered Interior Design</h1>
+                <p class="lead">Visualize your new room in seconds. Upload a photo, pick your points, and let our AI do the rest.</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <form method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="coords" id="coord_input" value="" />
+
+                    <div class="form-group text-center">
+                        <h2>1. Upload Your Image</h2>
+                        <div class="image-upload-box">
+                            <p><strong>Drag & drop a photo here or click to browse</strong></p>
+                            <input type="file" id="image_input" name="roomimage" accept="image/jpeg, image/png, image/jpg" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group text-center mt-4">
+                        <div id="preview_container" style="display: none;">
+                            <h2>2. Select Areas to Recolor</h2>
+                            <p>Click on each wall or surface you want to change. A dot will appear for each selection.</p>
+                            <div class="image-preview-container" id="image_preview_wrapper">
+                                <img id="image_preview" onclick="addHotspot(event);" style="cursor:crosshair;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Generate My Design</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <main class="main-wrapper">
+    <div class="container">
+        <div id="about" class="card mt-5">
+          <div class="row align-items-center">
+            <div class="col-md-4 text-center">
+              <img src="{{ url_for('static', filename='images/profile.jpg') }}" class="img-fluid rounded-circle mb-3" alt="Your Name">
+            
+              <h3>Vishal Kumar Vats</h3>
+            
+              <p class="text-muted">Web Developer & AI Enthusiast</p>
+            </div>
+          <div class="col-md-8">
+            <h2>About The Project</h2>
+            <p>
+                DECORAI was born from a passion for blending technology with creative design. I wanted to create a tool that empowers users to visualize their interior design ideas effortlessly. This project utilizes cutting-edge AI, including the Segment Anything Model (SAM), to intelligently identify and recolor walls, making the process of redecorating simple and fun.
+            </p>
+            <h2>Connect With Me</h2>
+            <p>
+                I'm always looking to connect with others who are passionate about technology and design. Feel free to reach out!
+            </p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/vishalkumarvats/" target="_blank" class="btn btn-secondary">LinkedIn</a>
+                <a href="mailto:aclashzofficial@gmail.com" class="btn btn-secondary">Email Me</a>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </main>
+
+<footer>
+    <footer>
+        <p>Copyright &copy;2025 All rights reserved | Designed by Vishal Kumar Vats</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preloader = document.querySelector('#preloader');
+            window.addEventListener('load', () => {
+                if (preloader) {
+                    preloader.style.display = 'none';
+                }
+            });
+
+            const imageInput = document.getElementById('image_input');
+            const previewContainer = document.getElementById('preview_container');
+            const imagePreview = document.getElementById('image_preview');
+            const coordInput = document.getElementById('coord_input');
+            const previewWrapper = document.getElementById('image_preview_wrapper');
+
+            imageInput.addEventListener('change', (event) => {
+                if (event.target.files && event.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                        coordInput.value = '';
+                        document.querySelectorAll('.hotspot-marker').forEach(marker => marker.remove());
+                    };
+                    reader.readAsDataURL(event.target.files[0]);
+                }
+            });
+        });
+
+        function addHotspot(event) {
+            const rect = event.target.getBoundingClientRect();
+            
+            // Get click coordinates relative to the displayed image
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            // Get the actual displayed size of the image
+            const displayWidth = event.target.clientWidth;
+            const displayHeight = event.target.clientHeight;
+            
+            // Calculate RELATIVE coordinates (0.0 to 1.0)
+            // We limit to 4 decimal places for cleanliness
+            const relX = (x / displayWidth).toFixed(4);
+            const relY = (y / displayHeight).toFixed(4);
+            
+            // Append coordinates to the hidden input
+            const coordInput = document.getElementById('coord_input');
+            if (coordInput.value) {
+                coordInput.value += '|';
+            }
+            // Send relative values: "0.5321,0.2104"
+            coordInput.value += `${relX},${relY}`;
+
+            // Add a visual marker (Visuals still use pixels)
+            const marker = document.createElement('div');
+            marker.className = 'hotspot-marker';
+            marker.style.left = `${x}px`;
+            marker.style.top = `${y}px`;
+            document.getElementById('image_preview_wrapper').appendChild(marker);
+            
+            console.log(`Point added (Relative): ${relX}, ${relY}`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Ignore the virtual environment folder (often named venv, env, or .venv)
+venv/
+env/
+.venv/
+
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+
+# Ignore large model weights (optional, but recommended for large AI files)
+*.pth
+*.pt
+*.onnx
+
+# Ignore system files
+.DS_Store
+
+/checkpoints
